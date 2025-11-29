@@ -24,8 +24,8 @@ from Processing.add_eval import add_eval
 # Username
 username = "kingsk4"
 
-# Download PGN files from user archives
-download_pgn(username)
+# Download PGN files from user archives from 2025 onwards
+download_pgn('kingsk4', start_date='2025-01')
 username = username.lower()
 if len(username) > 8:
     username = username[:8]
