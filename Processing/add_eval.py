@@ -4,7 +4,6 @@ Stockfish evaluation using the stockfish Python package.
 Usage:
     from Utils.add_eval import add_eval
     df_with_evals = add_eval(move_df, depth=15)
-    df_filtered = add_eval(move_df, depth=15, start_date='2024-01', end_date='2024-12')
 """
 
 import pandas as pd
@@ -23,7 +22,7 @@ def is_valid_fen(fen: str) -> bool:
     except:
         return False
 
-def add_eval(move_df: pd.DataFrame, depth: int = 15, start_date: str = None, end_date: str = None) -> pd.DataFrame:
+def add_eval(move_df: pd.DataFrame, depth: int = 15) -> pd.DataFrame:
     """
     Add Stockfish evaluation to moves DataFrame.
 
@@ -33,10 +32,6 @@ def add_eval(move_df: pd.DataFrame, depth: int = 15, start_date: str = None, end
         DataFrame with 'fen' column
     depth : int
         Analysis depth (default: 15)
-    start_date : str, optional
-        Start date in 'YYYY-MM' format (inclusive)
-    end_date : str, optional
-        End date in 'YYYY-MM' format (inclusive)
 
     Returns:
     --------
@@ -44,23 +39,6 @@ def add_eval(move_df: pd.DataFrame, depth: int = 15, start_date: str = None, end
         DataFrame with added 'eval' column
     """
     df = move_df.copy()
-    
-    # Filter by date range if specified
-    if start_date is not None or end_date is not None:
-        if 'date' not in df.columns:
-            raise ValueError("DataFrame must have 'date' column for date filtering")
-        
-        df['date'] = pd.to_datetime(df['date'])
-        df['year_month'] = df['date'].dt.to_period('M')
-        
-        if start_date is not None:
-            start_period = pd.Period(start_date, freq='M')
-            df = df[df['year_month'] >= start_period]
-        if end_date is not None:
-            end_period = pd.Period(end_date, freq='M')
-            df = df[df['year_month'] <= end_period]
-        
-        df = df.drop(columns=['year_month']).reset_index(drop=True)
     
     # Initialize Stockfish
     stockfish = Stockfish(path=STOCK_PATH, depth=depth)
@@ -100,7 +78,7 @@ def add_eval(move_df: pd.DataFrame, depth: int = 15, start_date: str = None, end
             print(f"Evaluated {index + 1}/{total} positions... ({invalid_count} invalid)")
     
     df['eval'] = evals
-    print(f"\nCompleted: {total} positions")
+    print(f"\n Completed: {total} positions")
     print(f"Invalid FENs: {invalid_count}")
     
     return df
