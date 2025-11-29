@@ -1,0 +1,12 @@
+# All files in Data directory
+Data/
+
+# All duckdb database files and walkers
+*.duckdb
+*.duckdb.wal
+
+# All pycache__ directories
+**/__pycache__/
+
+# Any CSV stragglers
+*.csv
